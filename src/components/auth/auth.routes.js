@@ -1,12 +1,13 @@
 const express = require('express');
-
 const router = express.Router();
+const controller = require('./auth.controller');
+const prefix = '/auth';
 
-router.post('/login/', (req, res) => {
-    return res.send({data: 'POST Login'});
-});
-router.post('/register/', (req, res) => {
-    return res.send({data: 'POST Register'});
-});
+router.post(prefix + '/login', controller.login);
+
+// router.post('/register/', (req, res) => {
+//     return res.send({data: 'POST Register'});
+// });
 
 module.exports = router;
+

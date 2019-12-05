@@ -1,4 +1,5 @@
 const userModel = require('./users.model');
+const bcrypt = require('bcryptjs');
 
 exports.userAll = async (body) => {
     let findModel = await userModel.find({});
@@ -21,7 +22,53 @@ exports.userGetById = async (id) => {
 }
 
 exports.userPost = async (body) => {
-    const newUser = new userModel(body);
+
+    let userDTO = {
+        email: body.email,
+        username: body.userName,
+        password: body.password,
+        firstname: body.firstName,
+        lastname: body.lastname
+    };
+
+
+    // Validate Duplicate
+    let findUser = await userModel.findOne({"email": userDTO.email});
+
+    if(!findUser) {
+        // Security
+        const salt = await bcrypt.genSalt(10);
+        userDTO.password = await bcrypt.hash(body.password, salt);
+
+        const newUser = new userModel(userDTO);
+        return await newUser.save().then(user => {
+            return {
+                isValid: true, 
+                data: user, 
+                message: `User created successfull!`,
+                statusCode: 200
+            };
+        }).catch(err => {
+            return {
+                isValid: false, 
+                data: null, 
+                message: err.message,
+                statusCode: 400
+            };
+        });
+    }
+
+    return {
+        isValid: false, 
+        data: null, 
+        message: `User register!`,
+        statusCode: 401
+    };
+
+
+
+    
+
     // let user = await newUser.save();
     // if(user !== null) {
     //     return {
@@ -38,21 +85,7 @@ exports.userPost = async (body) => {
     //         statusCode: 400
     //     };
     // }
-    return await newUser.save().then(user => {
-        return {
-            isValid: true, 
-            data: user, 
-            message: `User created successfull!`,
-            statusCode: 200
-        };
-    }).catch(err => {
-        return {
-            isValid: false, 
-            data: null, 
-            message: `Error to created User successfull!`,
-            statusCode: 400
-        };
-    });
+    
  
 }
 
