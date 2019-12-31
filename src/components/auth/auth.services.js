@@ -1,5 +1,7 @@
 const userModel = require('../users/users.model');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const userService = require('../users/users.services');
 
 exports.login = async (body) => {
 
@@ -21,6 +23,15 @@ exports.login = async (body) => {
             };
         }
 
+        const payload = {
+            sub: findUser._id,
+            iat: Math.floor(Date.now() / 1000),
+            exp: Math.floor(Date.now() / 1000) + Math.floor(parseInt(60000) / 1000),
+        };
+
+        token = jwt.sign(payload, 'R6EkcHsmA8V4vcHg', { algorithm: 'HS256' });
+
+
     } else {
         return {
             isValid: false, 
@@ -32,10 +43,15 @@ exports.login = async (body) => {
 
     return {
         isValid: true, 
-        data: findUser, 
+        data: token, 
         message: `Welcome ${findUser.firstname}`,
         statusCode: 200
     };
 
     
+}
+
+
+exports.register = async (body) => {
+    return await userService.userPost(body);
 }

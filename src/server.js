@@ -1,13 +1,14 @@
 const app = require('./app');
-const mongoose = require('./config/mongoose');
+const db = require('./config/dbConnection');
 
-app.listen(3000,(error) => {
+app.listen(3000, (error) =>  {
     if(error) {
-        console.log(`Server no start on port 3000`);
+        console.log(`Server no start`);
         return false;
     }
-    mongoose.connectionDB();
-    console.log(`Server Start on port 3000`);
+
+    db.connectionDB()
+    console.log(`Server Start`);
 });
 
 module.exports = app;

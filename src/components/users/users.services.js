@@ -6,7 +6,7 @@ exports.userAll = async (body) => {
     return {
         isValid: true, 
         data: findModel, 
-        message: `User List successfull!`,
+        message: `User List successfull dddd!`,
         statusCode: 200
     };;
 }
